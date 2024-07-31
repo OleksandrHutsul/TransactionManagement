@@ -11,7 +11,20 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<ApiDbContext>(options => options.UseSqlServer(
     builder.Configuration.GetConnectionString("SqlConnection")));
 
+builder.Services.AddHttpClient();
+
+builder.Services.AddTransient<LocationService>(provider =>
+    new LocationService(
+        provider.GetRequiredService<HttpClient>(),
+        builder.Configuration["GeoNames:Username"]));
+
 builder.Services.AddDependencyInjections();
+
+builder.Services.Configure<CsvHelper.Configuration.CsvConfiguration>(options =>
+{
+    options.HasHeaderRecord = true;
+    options.HeaderValidated = null;
+});
 
 var app = builder.Build();
 

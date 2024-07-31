@@ -1,10 +1,12 @@
-﻿namespace webapi.DI
+﻿using TransactionManagement.BLL.Services;
+
+namespace webapi.DI
 {
     public static class DependencyInjections
     {
         public static void AddDependencyInjections(this IServiceCollection services)
         {
-            //services.AddTransient<>();
+            services.AddTransient<TransactionService>();
         }
     }
 }

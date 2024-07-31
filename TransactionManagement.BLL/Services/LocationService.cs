@@ -1,0 +1,73 @@
+﻿using System.Globalization;
+using Newtonsoft.Json.Linq;
+using TransactionManagement.BLL.Interfaces;
+using TransactionManagement.DTO.Models;
+
+public class LocationService: ILocation
+{
+    private readonly HttpClient _httpClient;
+    private readonly string _geoNamesUsername;
+
+    public LocationService(HttpClient httpClient, string geoNamesUsername)
+    {
+        _httpClient = httpClient;
+        _geoNamesUsername = geoNamesUsername;
+    }
+
+    public async Task<LocationDTO> GetLocationInfoAsync(string coordinates)
+    {
+        var coordinateParts = coordinates.Split(',');
+        if (coordinateParts.Length != 2)
+        {
+            return null;
+        }
+
+        var latitude = double.Parse(coordinateParts[0].Trim(), CultureInfo.InvariantCulture);
+        var longitude = double.Parse(coordinateParts[1].Trim(), CultureInfo.InvariantCulture);
+
+        var city = await GetCityAsync(latitude, longitude);
+        var timeZone = await GetTimeZoneAsync(latitude, longitude);
+
+        return new LocationDTO
+        {
+            City = city,
+            UTC = timeZone,
+            Coordinates = coordinates
+        };
+    }
+
+    public async Task<string> GetCityAsync(double latitude, double longitude)
+    {
+        double roundedLatitude = Math.Round(latitude, 6);
+        double roundedLongitude = Math.Round(longitude, 6);
+
+        var url = $"http://api.geonames.org/findNearbyPlaceNameJSON?lat={roundedLatitude.ToString(CultureInfo.InvariantCulture)}&lng={roundedLongitude.ToString(CultureInfo.InvariantCulture)}&username={_geoNamesUsername}";
+
+        var response = await _httpClient.GetStringAsync(url);
+        var json = JObject.Parse(response);
+        var city = json["geonames"]?.FirstOrDefault()?["name"]?.ToString();
+
+        if (city is null)
+        {
+            return "Not found city";
+        }
+
+        return city;
+    }
+
+    public async Task<string> GetTimeZoneAsync(double latitude, double longitude)
+    {
+        double roundedLatitude = Math.Round(latitude, 6);
+        double roundedLongitude = Math.Round(longitude, 6);
+
+        var url = $"http://api.geonames.org/timezoneJSON?lat={roundedLatitude.ToString(CultureInfo.InvariantCulture)}&lng={roundedLongitude.ToString(CultureInfo.InvariantCulture)}&username={_geoNamesUsername}";
+        var response = await _httpClient.GetStringAsync(url);
+        var json = JObject.Parse(response);
+        var rawOffset = json["rawOffset"]?.ToString();
+        if (rawOffset is null)
+        {
+            return "Not found time";
+        }
+        return rawOffset;
+    }
+}
