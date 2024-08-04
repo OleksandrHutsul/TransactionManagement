@@ -2,6 +2,6 @@
 {
     internal interface ITransaction
     {
-        public Task DownloadingCSVFile(Stream stream);
+        public Task UploadingCSVFile(Stream stream);
     }
 }

@@ -8,8 +8,9 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddDbContext<ApiDbContext>(options => options.UseSqlServer(
-    builder.Configuration.GetConnectionString("SqlConnection")));
+builder.Services.AddDbContextPool<ApiDbContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("SqlConnection")));
+
 
 builder.Services.AddHttpClient();
 

@@ -38,10 +38,7 @@ public class LocationService: ILocation
 
     public async Task<string> GetCityAsync(double latitude, double longitude)
     {
-        double roundedLatitude = Math.Round(latitude, 6);
-        double roundedLongitude = Math.Round(longitude, 6);
-
-        var url = $"http://api.geonames.org/findNearbyPlaceNameJSON?lat={roundedLatitude.ToString(CultureInfo.InvariantCulture)}&lng={roundedLongitude.ToString(CultureInfo.InvariantCulture)}&username={_geoNamesUsername}";
+        var url = $"http://api.geonames.org/findNearbyPlaceNameJSON?lat={latitude.ToString(CultureInfo.InvariantCulture)}&lng={longitude.ToString(CultureInfo.InvariantCulture)}&username={_geoNamesUsername}";
 
         var response = await _httpClient.GetStringAsync(url);
         var json = JObject.Parse(response);
@@ -57,10 +54,7 @@ public class LocationService: ILocation
 
     public async Task<string> GetTimeZoneAsync(double latitude, double longitude)
     {
-        double roundedLatitude = Math.Round(latitude, 6);
-        double roundedLongitude = Math.Round(longitude, 6);
-
-        var url = $"http://api.geonames.org/timezoneJSON?lat={roundedLatitude.ToString(CultureInfo.InvariantCulture)}&lng={roundedLongitude.ToString(CultureInfo.InvariantCulture)}&username={_geoNamesUsername}";
+        var url = $"http://api.geonames.org/timezoneJSON?lat={latitude.ToString(CultureInfo.InvariantCulture)}&lng={longitude.ToString(CultureInfo.InvariantCulture)}&username={_geoNamesUsername}";
         var response = await _httpClient.GetStringAsync(url);
         var json = JObject.Parse(response);
         var rawOffset = json["rawOffset"]?.ToString();

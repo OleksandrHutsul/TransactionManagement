@@ -29,7 +29,7 @@ namespace webapi.Controllers
 
             using(var stream = file.OpenReadStream())
             {
-                await _transactionService.DownloadingCSVFile(stream);
+                await _transactionService.UploadingCSVFile(stream);
             }
 
             return Ok("File uploaded and processed.");

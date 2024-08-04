@@ -7,7 +7,7 @@ using TransactionManagement.DTO.Models;
 
 namespace TransactionManagement.BLL.Services
 {
-    public class TransactionService: ITransaction
+    public class TransactionService : ITransaction
     {
         private readonly ApiDbContext _context;
         private readonly LocationService _locationService;
@@ -18,43 +18,56 @@ namespace TransactionManagement.BLL.Services
             _locationService = locationService;
         }
 
-        public async Task DownloadingCSVFile(Stream stream)
+        public async Task UploadingCSVFile(Stream stream)
         {
+            const int batchSize = 50;
             using (var reader = new StreamReader(stream))
             using (var csv = new CsvReader(reader, CultureInfo.InvariantCulture))
             {
                 csv.Context.RegisterClassMap<TransactionDTOMap>();
                 var records = csv.GetRecords<TransactionDTO>().ToList();
-                foreach (var record in records)
+
+                for (int i = 0; i < records.Count; i += batchSize)
                 {
-                    var locationInfo = await _locationService.GetLocationInfoAsync(record.Location.Coordinates);
-                    if (locationInfo != null)
+                    var batch = records.Skip(i).Take(batchSize).ToList();
+
+                    try
                     {
-                        var location = new Location
+                        foreach (var record in batch)
                         {
-                            City = locationInfo.City,
-                            UTC = locationInfo.UTC,
-                            Coordinates = locationInfo.Coordinates
-                        };
+                            var locationInfo = await _locationService.GetLocationInfoAsync(record.Location.Coordinates);
+                            if (locationInfo != null)
+                            {
+                                var location = new Location
+                                {
+                                    City = locationInfo.City,
+                                    UTC = locationInfo.UTC,
+                                    Coordinates = locationInfo.Coordinates
+                                };
 
-                        _context.Locations.Add(location);
-                        await _context.SaveChangesAsync();
+                                _context.Locations.Add(location);
+                                await _context.SaveChangesAsync();
 
-                        var transaction = new Transactions
-                        {
-                            TransactionId = record.TransactionId,
-                            Name = record.Name,
-                            Email = record.Email,
-                            Amount = float.Parse(record.Amount.TrimStart('$'), CultureInfo.InvariantCulture),
-                            TransactionDate = DateTime.Parse(record.TransactionDate, CultureInfo.InvariantCulture),
-                            LocationId = location.Id
-                        };
+                                var transactionEntity = new Transactions
+                                {
+                                    TransactionId = record.TransactionId,
+                                    Name = record.Name,
+                                    Email = record.Email,
+                                    Amount = float.Parse(record.Amount.TrimStart('$'), CultureInfo.InvariantCulture),
+                                    TransactionDate = DateTime.Parse(record.TransactionDate, CultureInfo.InvariantCulture),
+                                    LocationId = location.Id
+                                };
 
-                        _context.Transactions.Add(transaction);
+                                _context.Transactions.Add(transactionEntity);
+                                await _context.SaveChangesAsync();
+                            }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        throw new Exception(ex.Message, ex);
                     }
                 }
-
-                await _context.SaveChangesAsync();
             }
         }
     }

@@ -12,7 +12,7 @@ using TransactionManagement.DAL.Context;
 namespace TransactionManagement.DAL.Migrations
 {
     [DbContext(typeof(ApiDbContext))]
-    [Migration("20240729201923_initDb")]
+    [Migration("20240804130723_initDb")]
     partial class initDb
     {
         /// <inheritdoc />
