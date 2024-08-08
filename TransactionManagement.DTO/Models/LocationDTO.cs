@@ -6,7 +6,7 @@ namespace TransactionManagement.DTO.Models
     {
         public int Id { get; set; }
         [Required]
-        public string City { get; set; }
+        public string IANAZone { get; set; }
         [Required]
         public string UTC { get; set; }
         [Required]

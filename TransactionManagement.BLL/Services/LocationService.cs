@@ -3,65 +3,65 @@ using Newtonsoft.Json.Linq;
 using TransactionManagement.BLL.Interfaces;
 using TransactionManagement.DTO.Models;
 
-public class LocationService: ILocation
+namespace TransactionManagement.BLL.Services
 {
-    private readonly HttpClient _httpClient;
-    private readonly string _geoNamesUsername;
-
-    public LocationService(HttpClient httpClient, string geoNamesUsername)
+    public class LocationService : ILocation
     {
-        _httpClient = httpClient;
-        _geoNamesUsername = geoNamesUsername;
-    }
+        private readonly HttpClient _httpClient;
+        private readonly string _geoNamesUsername;
 
-    public async Task<LocationDTO> GetLocationInfoAsync(string coordinates)
-    {
-        var coordinateParts = coordinates.Split(',');
-        if (coordinateParts.Length != 2)
+        public LocationService(HttpClient httpClient, string geoNamesUsername)
         {
-            return null;
+            _httpClient = httpClient;
+            _geoNamesUsername = geoNamesUsername;
         }
 
-        var latitude = double.Parse(coordinateParts[0].Trim(), CultureInfo.InvariantCulture);
-        var longitude = double.Parse(coordinateParts[1].Trim(), CultureInfo.InvariantCulture);
-
-        var city = await GetCityAsync(latitude, longitude);
-        var timeZone = await GetTimeZoneAsync(latitude, longitude);
-
-        return new LocationDTO
+        public async Task<LocationDTO> GetLocationInfoAsync(string coordinates)
         {
-            City = city,
-            UTC = timeZone,
-            Coordinates = coordinates
-        };
-    }
+            var coordinateParts = coordinates.Split(',');
+            if (coordinateParts.Length != 2)
+            {
+                return null;
+            }
 
-    public async Task<string> GetCityAsync(double latitude, double longitude)
-    {
-        var url = $"http://api.geonames.org/findNearbyPlaceNameJSON?lat={latitude.ToString(CultureInfo.InvariantCulture)}&lng={longitude.ToString(CultureInfo.InvariantCulture)}&username={_geoNamesUsername}";
+            var latitude = double.Parse(coordinateParts[0].Trim(), CultureInfo.InvariantCulture);
+            var longitude = double.Parse(coordinateParts[1].Trim(), CultureInfo.InvariantCulture);
 
-        var response = await _httpClient.GetStringAsync(url);
-        var json = JObject.Parse(response);
-        var city = json["geonames"]?.FirstOrDefault()?["name"]?.ToString();
+            var city = await GetCityAsync(latitude, longitude);
+            var timeZone = await GetTimeZoneAsync(latitude, longitude);
 
-        if (city is null)
-        {
-            return "Not found city";
+            return new LocationDTO
+            {
+                IANAZone = city,
+                UTC = timeZone,
+                Coordinates = coordinates
+            };
         }
 
-        return city;
-    }
-
-    public async Task<string> GetTimeZoneAsync(double latitude, double longitude)
-    {
-        var url = $"http://api.geonames.org/timezoneJSON?lat={latitude.ToString(CultureInfo.InvariantCulture)}&lng={longitude.ToString(CultureInfo.InvariantCulture)}&username={_geoNamesUsername}";
-        var response = await _httpClient.GetStringAsync(url);
-        var json = JObject.Parse(response);
-        var rawOffset = json["rawOffset"]?.ToString();
-        if (rawOffset is null)
+        public async Task<string> GetCityAsync(double latitude, double longitude)
         {
-            return "Not found time";
+            var url = $"http://api.geonames.org/timezoneJSON?lat={latitude.ToString(CultureInfo.InvariantCulture)}&lng={longitude.ToString(CultureInfo.InvariantCulture)}&username={_geoNamesUsername}";
+            var response = await _httpClient.GetStringAsync(url);
+            var json = JObject.Parse(response);
+            var timeZoneId = json["timezoneId"]?.ToString(); 
+            if (timeZoneId is null)
+            {
+                return "Not found time";
+            }
+            return timeZoneId;
         }
-        return rawOffset;
+
+        public async Task<string> GetTimeZoneAsync(double latitude, double longitude)
+        {
+            var url = $"http://api.geonames.org/timezoneJSON?lat={latitude.ToString(CultureInfo.InvariantCulture)}&lng={longitude.ToString(CultureInfo.InvariantCulture)}&username={_geoNamesUsername}";
+            var response = await _httpClient.GetStringAsync(url);
+            var json = JObject.Parse(response);
+            var rawOffset = json["rawOffset"]?.ToString();
+            if (rawOffset is null)
+            {
+                return "Not found IANA time zone";
+            }
+            return rawOffset;
+        }
     }
 }

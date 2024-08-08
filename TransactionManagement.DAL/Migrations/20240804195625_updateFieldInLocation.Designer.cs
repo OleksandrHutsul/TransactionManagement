@@ -12,8 +12,8 @@ using TransactionManagement.DAL.Context;
 namespace TransactionManagement.DAL.Migrations
 {
     [DbContext(typeof(ApiDbContext))]
-    [Migration("20240804130723_initDb")]
-    partial class initDb
+    [Migration("20240804195625_updateFieldInLocation")]
+    partial class updateFieldInLocation
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -33,11 +33,11 @@ namespace TransactionManagement.DAL.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("City")
+                    b.Property<string>("Coordinates")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Coordinates")
+                    b.Property<string>("IANAZone")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 

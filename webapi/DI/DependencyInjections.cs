@@ -7,6 +7,8 @@ namespace webapi.DI
         public static void AddDependencyInjections(this IServiceCollection services)
         {
             services.AddTransient<TransactionService>();
+            services.AddTransient<GetListTransactionService>();
+            services.AddTransient<ExportToExcelService>();
         }
     }
 }
