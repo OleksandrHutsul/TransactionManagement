@@ -11,9 +11,9 @@ namespace TransactionManagement.BLL.Services
     public class TransactionService : ITransaction
     {
         private readonly ApiDbContext _context;
-        private readonly LocationService _locationService;
+        private readonly ILocation _locationService;
 
-        public TransactionService(ApiDbContext context, LocationService locationService)
+        public TransactionService(ApiDbContext context, ILocation locationService)
         {
             _context = context;
             _locationService = locationService;

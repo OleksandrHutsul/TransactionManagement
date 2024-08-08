@@ -7,9 +7,9 @@ namespace TransactionManagement.BLL.Services
     public class GetListTransactionService:IGetListTransaction
     {
         private readonly ApiDbContext _context;
-        private readonly ExportToExcelService _exportToExcel;
+        private readonly IExportToExcel _exportToExcel;
 
-        public GetListTransactionService(ApiDbContext context, ExportToExcelService exportToExcel)
+        public GetListTransactionService(ApiDbContext context, IExportToExcel exportToExcel)
         {
             _context = context;
             _exportToExcel = exportToExcel;

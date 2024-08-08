@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using TransactionManagement.BLL.Services;
+using TransactionManagement.BLL.Interfaces;
 using TransactionManagement.DTO.Models;
 
 namespace webapi.Controllers
@@ -8,10 +9,10 @@ namespace webapi.Controllers
     [ApiController]
     public class TransactionsController : ControllerBase
     {
-        private readonly TransactionService _transactionService;
-        private readonly GetListTransactionService _getListTransactionService;
+        private readonly ITransaction _transactionService;
+        private readonly IGetListTransaction _getListTransactionService;
 
-        public TransactionsController(TransactionService transactionService, GetListTransactionService getListTransactionService)
+        public TransactionsController(ITransaction transactionService, IGetListTransaction getListTransactionService)
         {
             _transactionService = transactionService;
             _getListTransactionService = getListTransactionService;

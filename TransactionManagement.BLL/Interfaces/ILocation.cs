@@ -2,7 +2,7 @@
 
 namespace TransactionManagement.BLL.Interfaces
 {
-    internal interface ILocation
+    public interface ILocation
     {
         public Task<LocationDTO> GetLocationInfoAsync(string coordinates);
         public Task<string> GetCityAsync(double latitude, double longitude);
