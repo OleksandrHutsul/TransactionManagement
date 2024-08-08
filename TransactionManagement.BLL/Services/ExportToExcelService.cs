@@ -1,9 +1,10 @@
 ﻿using ClosedXML.Excel;
+using TransactionManagement.BLL.Interfaces;
 using TransactionManagement.DAL.Entities;
 
 namespace TransactionManagement.BLL.Services
 {
-    public class ExportToExcelService
+    public class ExportToExcelService: IExportToExcel
     {
         public async Task<byte[]> ExportTransactionsToExcelAsync(List<Transactions> transactions, List<string> selectedColumns)
         {

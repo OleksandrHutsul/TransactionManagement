@@ -1,9 +1,10 @@
 ﻿using TransactionManagement.DAL.Context;
 using Microsoft.EntityFrameworkCore;
+using TransactionManagement.BLL.Interfaces;
 
 namespace TransactionManagement.BLL.Services
 {
-    public class GetListTransactionService
+    public class GetListTransactionService:IGetListTransaction
     {
         private readonly ApiDbContext _context;
         private readonly ExportToExcelService _exportToExcel;
