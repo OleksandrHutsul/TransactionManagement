@@ -1,6 +1,9 @@
 # TransactionManagement
 
-**#Project Structure:**
+This project was developed as part of a test task. A detailed instruction is also attached to it below.
+
+# **Project Structure:**
+
 1. TransactionManagement.BLL: This contains the interfaces and the services that implement them.
 2. TransactionManagement.DAL: This describes the structure of the database, created using Entity Framework (EF).
 3. TransactionManagement.DTO: This contains the database models for easier handling in the code.
@@ -9,17 +12,18 @@
    
 ![image](https://github.com/user-attachments/assets/09bbbb18-3b8d-41d8-95ab-f8e180548ca2)
 
-**#Implementation**
+# **Implementation**
+
 In this task, the following functionality has been implemented:
+1. After uploading the file, .NET processes the content and adds the data to the database based on transaction_id found in the CSV file. If no record with such a unique transaction_id exists in the database, a new record is added; if a record does exist, the transaction status is updated.
+2. The client's and transaction's time zones can be determined from the location coordinates. Any libraries or online services can be used for this conversion.
+3. When exporting to Excel, the user should be able to download a file with transaction information (columns chosen by the developer).
+4. Allow the user to retrieve a list of transactions within a date range that occurred in the time zone of the current user making the API requests.
+5. Allow the user to retrieve a list of transactions within a date range that occurred in the clients' time zones. The client's time zone is stored with each transaction and was obtained from the geolocation of the specific transaction.
+6. Allow the user to retrieve a list of transactions for January 2024 that occurred in the clients' time zones.
 
-After uploading the file, .NET processes the content and adds the data to the database based on transaction_id found in the CSV file. If no record with such a unique transaction_id exists in the database, a new record is added; if a record does exist, the transaction status is updated.
-The client's and transaction's time zones can be determined from the location coordinates. Any libraries or online services can be used for this conversion.
-When exporting to Excel, the user should be able to download a file with transaction information (columns chosen by the developer).
-Allow the user to retrieve a list of transactions within a date range that occurred in the time zone of the current user making the API requests.
-Allow the user to retrieve a list of transactions within a date range that occurred in the clients' time zones. The client's time zone is stored with each transaction and was obtained from the geolocation of the specific transaction.
-Allow the user to retrieve a list of transactions for January 2024 that occurred in the clients' time zones.
+# **How to Use?**
 
-**#How to Use?**
 First, edit the path to the database and perform a migration.
 Let’s break down the methods:
 The upload-csv method in the Transactions controller works as follows:
@@ -40,5 +44,6 @@ They can leave any field of their choice.
 Let’s consider the next method, get-transactions-by-date, which implements task 5. The user must fill in two dates and, similarly to the previous section, use Excel download.
 The final method is get-transactions-for-january-2024, which implements task 6. The user must enter their identifier and, as mentioned above, use Excel.
 
-**#Tests**
+# **Tests**
+
 Two tests were implemented for the two services, namely Transaction and Location, to check how the methods work. These are my first tests, so I’m not entirely sure if they are written correctly, but this is how it turned out.
