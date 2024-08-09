@@ -20,7 +20,7 @@ builder.Services.AddTransient<LocationService>(provider =>
         provider.GetRequiredService<HttpClient>(),
         builder.Configuration["GeoNames:Username"]));
 
-builder.Services.AddDependencyInjections();
+builder.Services.AddDependencyInjections(builder.Configuration);
 
 builder.Services.Configure<CsvHelper.Configuration.CsvConfiguration>(options =>
 {
